@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Volume2, VolumeX } from 'lucide-react';
+import { useAudioSynthesis } from '@/hooks/useAudioSynthesis';
 
 export interface Tone {
   id: string;
@@ -33,6 +34,9 @@ const Index = () => {
   const [isAnimated, setIsAnimated] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(false);
+
+  // Add audio synthesis
+  useAudioSynthesis(tones, soundEnabled);
 
   const addTone = useCallback(() => {
     if (tones.length >= 4) return; // Limit to 4 tones

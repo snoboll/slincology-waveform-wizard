@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { WaveformVisualization } from '@/components/WaveformVisualization';
 import { TonePanel } from '@/components/TonePanel';
@@ -9,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Volume2, VolumeX } from 'lucide-react';
 import { useAudioSynthesis } from '@/hooks/useAudioSynthesis';
-
 export interface Tone {
   id: string;
   frequency: number;
@@ -17,7 +15,6 @@ export interface Tone {
   phase: number;
   enabled: boolean;
 }
-
 const Index = () => {
   const [tones, setTones] = useState<Tone[]>([{
     id: '1',
@@ -39,10 +36,8 @@ const Index = () => {
 
   // Add audio synthesis
   useAudioSynthesis(tones, soundEnabled, masterFrequency);
-
   const addTone = useCallback(() => {
     if (tones.length >= 4) return;
-
     const newTone: Tone = {
       id: Date.now().toString(),
       frequency: 1,
@@ -52,22 +47,18 @@ const Index = () => {
     };
     setTones(prev => [...prev, newTone]);
   }, [tones.length]);
-
   const removeTone = useCallback((id: string) => {
     setTones(prev => prev.filter(tone => tone.id !== id));
   }, []);
-
   const updateTone = useCallback((id: string, updates: Partial<Tone>) => {
     setTones(prev => prev.map(tone => tone.id === id ? {
       ...tone,
       ...updates
     } : tone));
   }, []);
-
   const clearAll = useCallback(() => {
     setTones([]);
   }, []);
-
   const setJamesPreset = useCallback(() => {
     setTones([{
       id: '1',
@@ -84,15 +75,11 @@ const Index = () => {
     }]);
     setIsAnimated(false);
   }, []);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
         <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2 md:mb-4">
-            Slincology Explorer
-          </h1>
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2 md:mb-4">Slinkology Explorer</h1>
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto px-2">
             Wave Mode Visualization - See how different modes combine
           </p>
@@ -119,24 +106,12 @@ const Index = () => {
                   {/* Speed Control */}
                   <div className="flex items-center gap-2 bg-slate-700/30 rounded-lg p-2 min-w-0">
                     <Label className="text-slate-300 text-sm whitespace-nowrap">Speed</Label>
-                    <Slider 
-                      value={[animationSpeed]} 
-                      onValueChange={value => setAnimationSpeed(value[0])} 
-                      min={0.1} 
-                      max={3} 
-                      step={0.1} 
-                      className="w-16 sm:w-20" 
-                    />
+                    <Slider value={[animationSpeed]} onValueChange={value => setAnimationSpeed(value[0])} min={0.1} max={3} step={0.1} className="w-16 sm:w-20" />
                     <span className="text-slate-300 text-xs w-8">{animationSpeed.toFixed(1)}x</span>
                   </div>
                   
                   {/* Sound Toggle */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSoundEnabled(!soundEnabled)}
-                    className="flex items-center gap-2 whitespace-nowrap"
-                  >
+                  <Button variant="outline" size="sm" onClick={() => setSoundEnabled(!soundEnabled)} className="flex items-center gap-2 whitespace-nowrap">
                     {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                     <span className="hidden sm:inline">Sound</span>
                   </Button>
@@ -144,22 +119,13 @@ const Index = () => {
               </div>
               
               {/* Master Frequency Control */}
-              {soundEnabled && (
-                <div className="mb-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+              {soundEnabled && <div className="mb-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600">
                   <div className="flex items-center gap-4">
                     <Label className="text-slate-300 text-sm whitespace-nowrap">Master Freq:</Label>
-                    <Slider
-                      value={[masterFrequency]}
-                      onValueChange={value => setMasterFrequency(value[0])}
-                      min={110}
-                      max={880}
-                      step={10}
-                      className="flex-1 max-w-xs"
-                    />
+                    <Slider value={[masterFrequency]} onValueChange={value => setMasterFrequency(value[0])} min={110} max={880} step={10} className="flex-1 max-w-xs" />
                     <span className="text-slate-300 text-sm w-12">{masterFrequency}Hz</span>
                   </div>
-                </div>
-              )}
+                </div>}
               
               <WaveformVisualization tones={tones} isAnimated={isAnimated} animationSpeed={animationSpeed} />
             </Card>
@@ -197,8 +163,6 @@ const Index = () => {
           </div>
         </footer>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;

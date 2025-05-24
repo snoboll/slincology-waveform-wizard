@@ -175,9 +175,7 @@ const WaveLines: React.FC<{
   return (
     <group ref={linesRef}>
       {lineGeometries.map((lineData, index) => (
-        <line key={index} geometry={lineData.geometry}>
-          <lineBasicMaterial color={lineData.color} linewidth={2} />
-        </line>
+        <primitive key={index} object={new THREE.Line(lineData.geometry, new THREE.LineBasicMaterial({ color: lineData.color }))} />
       ))}
     </group>
   );

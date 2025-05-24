@@ -1,13 +1,25 @@
-
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
 import { Tone } from '@/pages/Index';
 
 interface WaveformVisualizationProps {
   tones: Tone[];
+  isAnimated: boolean;
 }
 
-export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ tones }) => {
+export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ tones, isAnimated }) => {
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    if (!isAnimated) return;
+    
+    const interval = setInterval(() => {
+      setTime(prevTime => prevTime + 0.05);
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [isAnimated]);
+
   const data = useMemo(() => {
     const points = 400;
     const maxLength = 4 * Math.PI; // Show rope length
@@ -23,8 +35,14 @@ export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ to
       let combinedValue = 0;
       tones.forEach((tone, index) => {
         if (tone.enabled) {
-          // For rope waves: sin(n * π * x / L) where n is the mode number
-          const value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / maxLength) + tone.phase);
+          let value;
+          if (isAnimated) {
+            // Traveling waves: sin(n * π * x / L - ωt + φ)
+            value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / maxLength) - (tone.frequency * time) + tone.phase);
+          } else {
+            // Standing waves: sin(n * π * x / L + φ)
+            value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / maxLength) + tone.phase);
+          }
           dataPoint[`mode${index}`] = value;
           combinedValue += value;
         }
@@ -35,7 +53,7 @@ export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ to
     }
     
     return result;
-  }, [tones]);
+  }, [tones, time, isAnimated]);
 
   const colors = [
     '#ef4444', // red

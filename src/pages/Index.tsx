@@ -6,6 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { Volume2, VolumeX } from 'lucide-react';
+
 export interface Tone {
   id: string;
   frequency: number;
@@ -13,6 +15,7 @@ export interface Tone {
   phase: number;
   enabled: boolean;
 }
+
 const Index = () => {
   const [tones, setTones] = useState<Tone[]>([{
     id: '1',
@@ -29,6 +32,8 @@ const Index = () => {
   }]);
   const [isAnimated, setIsAnimated] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(1);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+
   const addTone = useCallback(() => {
     if (tones.length >= 4) return; // Limit to 4 tones
 
@@ -69,14 +74,18 @@ const Index = () => {
     }]);
     setIsAnimated(false); // Set to standing waves
   }, []);
-  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
             Slincology Explorer
           </h1>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto"></p>
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+            Rope Wave Visualization - See how different wave modes combine (1 = half wave, 2 = full wave, etc.)
+          </p>
         </div>
 
         {/* Main Content */}
@@ -94,8 +103,26 @@ const Index = () => {
                   </div>
                   <div className="flex items-center gap-3 min-w-32">
                     <Label className="text-slate-300 text-sm">Speed</Label>
-                    <Slider value={[animationSpeed]} onValueChange={value => setAnimationSpeed(value[0])} min={0.1} max={3} step={0.1} className="w-20" />
+                    <Slider 
+                      value={[animationSpeed]} 
+                      onValueChange={value => setAnimationSpeed(value[0])} 
+                      min={0.1} 
+                      max={3} 
+                      step={0.1} 
+                      className="w-20" 
+                    />
                     <span className="text-slate-300 text-sm w-8">{animationSpeed.toFixed(1)}x</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSoundEnabled(!soundEnabled)}
+                      className="flex items-center gap-2"
+                    >
+                      {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                      Sound
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -124,7 +151,19 @@ const Index = () => {
             </Card>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-16 text-center space-y-4">
+          <div className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            Slinky Bro. inc.
+          </div>
+          <div className="text-slate-400 text-sm">
+            The Slinky was invented by Richard James in 1943
+          </div>
+        </footer>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

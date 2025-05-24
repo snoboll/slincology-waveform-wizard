@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { WaveformVisualization } from '@/components/WaveformVisualization';
 import { TonePanel } from '@/components/TonePanel';
@@ -48,6 +49,14 @@ const Index = () => {
     setTones([]);
   }, []);
 
+  const setJamesPreset = useCallback(() => {
+    setTones([
+      { id: '1', frequency: 1, amplitude: 1, phase: 0, enabled: true },
+      { id: '2', frequency: 3, amplitude: 0.5, phase: 0, enabled: true },
+    ]);
+    setIsAnimated(false); // Set to standing waves
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-8">
@@ -87,6 +96,13 @@ const Index = () => {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-cyan-400">Wave Modes (Max 4)</h2>
                 <div className="flex gap-2">
+                  <Button 
+                    onClick={setJamesPreset}
+                    className="bg-purple-600 hover:bg-purple-700"
+                    size="sm"
+                  >
+                    James
+                  </Button>
                   <Button 
                     onClick={addTone}
                     className="bg-cyan-600 hover:bg-cyan-700"

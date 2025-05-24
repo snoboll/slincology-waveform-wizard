@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 
 export interface Tone {
   id: string;
@@ -21,6 +22,7 @@ const Index = () => {
     { id: '2', frequency: 2, amplitude: 0.5, phase: 0, enabled: true },
   ]);
   const [isAnimated, setIsAnimated] = useState(true);
+  const [animationSpeed, setAnimationSpeed] = useState(1);
 
   const addTone = useCallback(() => {
     if (tones.length >= 4) return; // Limit to 4 tones
@@ -77,16 +79,30 @@ const Index = () => {
             <Card className="bg-slate-800/50 border-slate-700 p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-cyan-400">Wave Pattern</h2>
-                <div className="flex items-center gap-3">
-                  <Label className="text-slate-300">Standing Waves</Label>
-                  <Switch
-                    checked={isAnimated}
-                    onCheckedChange={setIsAnimated}
-                  />
-                  <Label className="text-slate-300">Traveling Waves</Label>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <Label className="text-slate-300">Standing Waves</Label>
+                    <Switch
+                      checked={isAnimated}
+                      onCheckedChange={setIsAnimated}
+                    />
+                    <Label className="text-slate-300">Traveling Waves</Label>
+                  </div>
+                  <div className="flex items-center gap-3 min-w-32">
+                    <Label className="text-slate-300 text-sm">Speed</Label>
+                    <Slider
+                      value={[animationSpeed]}
+                      onValueChange={(value) => setAnimationSpeed(value[0])}
+                      min={0.1}
+                      max={3}
+                      step={0.1}
+                      className="w-20"
+                    />
+                    <span className="text-slate-300 text-sm w-8">{animationSpeed.toFixed(1)}x</span>
+                  </div>
                 </div>
               </div>
-              <WaveformVisualization tones={tones} isAnimated={isAnimated} />
+              <WaveformVisualization tones={tones} isAnimated={isAnimated} animationSpeed={animationSpeed} />
             </Card>
           </div>
 
@@ -125,20 +141,6 @@ const Index = () => {
                 onUpdateTone={updateTone}
                 onRemoveTone={removeTone}
               />
-            </Card>
-
-            {/* Info Panel */}
-            <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <h3 className="text-lg font-semibold mb-3 text-cyan-400">Wave Modes</h3>
-              <div className="text-sm text-slate-300 space-y-2">
-                <p>• Mode 1: Half wavelength (fundamental)</p>
-                <p>• Mode 2: Full wavelength (first harmonic)</p>
-                <p>• Mode 3: 1.5 wavelengths</p>
-                <p>• Mode 4: 2 wavelengths</p>
-                <p>• Amplitude controls wave height</p>
-                <p>• Phase shifts the wave position</p>
-                <p>• Toggle between standing and traveling waves</p>
-              </div>
             </Card>
           </div>
         </div>

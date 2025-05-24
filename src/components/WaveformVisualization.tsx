@@ -6,18 +6,19 @@ import { Tone } from '@/pages/Index';
 interface WaveformVisualizationProps {
   tones: Tone[];
   isAnimated: boolean;
+  animationSpeed: number;
 }
 
-export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ tones, isAnimated }) => {
+export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ tones, isAnimated, animationSpeed }) => {
   const [time, setTime] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(prevTime => prevTime + 0.05);
+      setTime(prevTime => prevTime + (0.05 * animationSpeed));
     }, 50);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [animationSpeed]);
 
   const data = useMemo(() => {
     const points = 400;

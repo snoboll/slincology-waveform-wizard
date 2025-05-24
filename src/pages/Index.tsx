@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { WaveformVisualization } from '@/components/WaveformVisualization';
 import { TonePanel } from '@/components/TonePanel';
@@ -27,42 +28,46 @@ const Index = () => {
   }, {
     id: '2',
     frequency: 2,
-    amplitude: 0.5,
+    amplitude: 1,
     phase: 0,
     enabled: true
   }]);
   const [isAnimated, setIsAnimated] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(false);
-  const [masterFrequency, setMasterFrequency] = useState(220); // A3 as default
+  const [masterFrequency, setMasterFrequency] = useState(220);
 
   // Add audio synthesis
   useAudioSynthesis(tones, soundEnabled, masterFrequency);
 
   const addTone = useCallback(() => {
-    if (tones.length >= 4) return; // Limit to 4 tones
+    if (tones.length >= 4) return;
 
     const newTone: Tone = {
       id: Date.now().toString(),
       frequency: 1,
-      amplitude: 1, // Changed from 0.5 to 1
+      amplitude: 1,
       phase: 0,
       enabled: true
     };
     setTones(prev => [...prev, newTone]);
   }, [tones.length]);
+
   const removeTone = useCallback((id: string) => {
     setTones(prev => prev.filter(tone => tone.id !== id));
   }, []);
+
   const updateTone = useCallback((id: string, updates: Partial<Tone>) => {
     setTones(prev => prev.map(tone => tone.id === id ? {
       ...tone,
       ...updates
     } : tone));
   }, []);
+
   const clearAll = useCallback(() => {
     setTones([]);
   }, []);
+
   const setJamesPreset = useCallback(() => {
     setTones([{
       id: '1',
@@ -73,62 +78,68 @@ const Index = () => {
     }, {
       id: '2',
       frequency: 3,
-      amplitude: 0.5,
+      amplitude: 1,
       phase: 0,
       enabled: true
     }]);
-    setIsAnimated(false); // Set to standing waves
+    setIsAnimated(false);
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2 md:mb-4">
             Slincology Explorer
           </h1>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Rope Wave Visualization - See how different wave modes combine (1 = half wave, 2 = full wave, etc.)
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto px-2">
+            Wave Mode Visualization - See how different modes combine
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 md:gap-8">
           {/* Waveform Visualization */}
-          <div className="lg:col-span-2">
-            <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-cyan-400">Wave Pattern</h2>
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-3">
-                    <Label className="text-slate-300">Standing Waves</Label>
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <Card className="bg-slate-800/50 border-slate-700 p-3 md:p-6">
+              {/* Controls Header */}
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3">
+                <h2 className="text-xl md:text-2xl font-semibold text-cyan-400">Wave Pattern</h2>
+                
+                {/* Main Controls */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                  {/* Wave Type Toggle */}
+                  <div className="flex items-center justify-center gap-2 bg-slate-700/30 rounded-lg p-2">
+                    <Label className="text-slate-300 text-sm">Standing</Label>
                     <Switch checked={isAnimated} onCheckedChange={setIsAnimated} />
-                    <Label className="text-slate-300">Traveling Waves</Label>
+                    <Label className="text-slate-300 text-sm">Traveling</Label>
                   </div>
-                  <div className="flex items-center gap-3 min-w-32">
-                    <Label className="text-slate-300 text-sm">Speed</Label>
+                  
+                  {/* Speed Control */}
+                  <div className="flex items-center gap-2 bg-slate-700/30 rounded-lg p-2 min-w-0">
+                    <Label className="text-slate-300 text-sm whitespace-nowrap">Speed</Label>
                     <Slider 
                       value={[animationSpeed]} 
                       onValueChange={value => setAnimationSpeed(value[0])} 
                       min={0.1} 
                       max={3} 
                       step={0.1} 
-                      className="w-20" 
+                      className="w-16 sm:w-20" 
                     />
-                    <span className="text-slate-300 text-sm w-8">{animationSpeed.toFixed(1)}x</span>
+                    <span className="text-slate-300 text-xs w-8">{animationSpeed.toFixed(1)}x</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSoundEnabled(!soundEnabled)}
-                      className="flex items-center gap-2"
-                    >
-                      {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-                      Sound
-                    </Button>
-                  </div>
+                  
+                  {/* Sound Toggle */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSoundEnabled(!soundEnabled)}
+                    className="flex items-center gap-2 whitespace-nowrap"
+                  >
+                    {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                    <span className="hidden sm:inline">Sound</span>
+                  </Button>
                 </div>
               </div>
               
@@ -155,11 +166,11 @@ const Index = () => {
           </div>
 
           {/* Tone Controls */}
-          <div className="space-y-6">
-            <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-cyan-400">Wave Modes (Max 4)</h2>
-                <div className="flex gap-2">
+          <div className="order-1 lg:order-2">
+            <Card className="bg-slate-800/50 border-slate-700 p-3 md:p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3">
+                <h2 className="text-xl md:text-2xl font-semibold text-cyan-400">Wave Modes</h2>
+                <div className="flex flex-wrap gap-2">
                   <Button onClick={setJamesPreset} className="bg-purple-600 hover:bg-purple-700" size="sm">
                     James
                   </Button>
@@ -177,8 +188,8 @@ const Index = () => {
         </div>
 
         {/* Footer */}
-        <footer className="mt-16 text-center space-y-4">
-          <div className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+        <footer className="mt-8 md:mt-16 text-center space-y-2 md:space-y-4">
+          <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
             Slinky Bro. inc.
           </div>
           <div className="text-slate-400 text-sm">

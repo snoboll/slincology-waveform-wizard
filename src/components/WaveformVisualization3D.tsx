@@ -49,7 +49,7 @@ const WaveGeometry: React.FC<{
                 value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / 4) + tone.phase) * Math.cos(tone.frequency * timeRef.current);
               }
             } else {
-              // Circular waves from center
+              // Circular waves - concentric ripples from center (like skipping rope)
               const radius = Math.sqrt(x * x + z * z);
               if (isAnimated) {
                 value = tone.amplitude * Math.sin((tone.frequency * Math.PI * radius / 2) - (tone.frequency * timeRef.current) + tone.phase);
@@ -123,6 +123,7 @@ const WaveLines: React.FC<{
                 value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / 4) + tone.phase) * Math.cos(tone.frequency * timeRef.current);
               }
             } else {
+              // Circular waves - concentric ripples
               const radius = Math.sqrt(x * x + z * z);
               if (isAnimated) {
                 value = tone.amplitude * Math.sin((tone.frequency * Math.PI * radius / 2) - (tone.frequency * timeRef.current) + tone.phase);
@@ -148,20 +149,31 @@ const WaveLines: React.FC<{
     
     return tones.map((_, index) => {
       const points = [];
-      const segments = waveType === 'circular' ? 128 : 64;
       
       if (waveType === 'planar') {
+        // Linear line for planar waves
+        const segments = 64;
         for (let i = 0; i <= segments; i++) {
           const x = (i / segments) * 8 - 4;
           points.push(new THREE.Vector3(x, 0, 0));
         }
       } else {
-        for (let i = 0; i <= segments; i++) {
-          const angle = (i / segments) * Math.PI * 2;
-          const radius = 3;
-          const x = Math.cos(angle) * radius;
-          const z = Math.sin(angle) * radius;
-          points.push(new THREE.Vector3(x, 0, z));
+        // Concentric circles for circular waves
+        const segments = 128;
+        const numCircles = 4;
+        
+        for (let circle = 0; circle < numCircles; circle++) {
+          const radius = (circle + 1) * 0.8;
+          for (let i = 0; i <= segments; i++) {
+            const angle = (i / segments) * Math.PI * 2;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            points.push(new THREE.Vector3(x, 0, z));
+          }
+          // Close the circle
+          if (circle < numCircles - 1) {
+            points.push(new THREE.Vector3(radius, 0, 0));
+          }
         }
       }
       
@@ -175,7 +187,10 @@ const WaveLines: React.FC<{
   return (
     <group ref={linesRef}>
       {lineGeometries.map((lineData, index) => (
-        <primitive key={index} object={new THREE.Line(lineData.geometry, new THREE.LineBasicMaterial({ color: lineData.color }))} />
+        <primitive 
+          key={index} 
+          object={new THREE.Line(lineData.geometry, new THREE.LineBasicMaterial({ color: lineData.color }))} 
+        />
       ))}
     </group>
   );

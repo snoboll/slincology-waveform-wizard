@@ -13,8 +13,8 @@ export const TonePanel: React.FC<TonePanelProps> = ({ tones, onUpdateTone, onRem
   if (tones.length === 0) {
     return (
       <div className="text-center py-8 text-slate-400">
-        <p>No tones added yet.</p>
-        <p className="text-sm mt-2">Click "Add Tone" to get started!</p>
+        <p>No wave modes added yet.</p>
+        <p className="text-sm mt-2">Click "Add Mode" to get started!</p>
       </div>
     );
   }

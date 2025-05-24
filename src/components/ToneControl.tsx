@@ -18,18 +18,15 @@ export const ToneControl: React.FC<ToneControlProps> = ({ tone, index, onUpdate,
   const colors = [
     'border-l-red-500',
     'border-l-orange-500', 
-    'border-l-yellow-500',
     'border-l-green-500',
     'border-l-blue-500',
-    'border-l-violet-500',
-    'border-l-pink-500',
   ];
 
   return (
     <Card className={`bg-slate-700/50 border-slate-600 border-l-4 ${colors[index % colors.length]} p-4`}>
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-medium text-cyan-300">
-          Tone {index + 1}
+          Mode {index + 1}
         </h3>
         <div className="flex items-center gap-2">
           <Switch
@@ -48,17 +45,17 @@ export const ToneControl: React.FC<ToneControlProps> = ({ tone, index, onUpdate,
       </div>
 
       <div className="space-y-4">
-        {/* Frequency Control */}
+        {/* Frequency Control - Whole numbers only */}
         <div>
           <Label className="text-sm text-slate-300 mb-2 block">
-            Frequency: {tone.frequency.toFixed(1)} Hz
+            Wave Mode: {tone.frequency} {tone.frequency === 1 ? '(half wave)' : tone.frequency === 2 ? '(full wave)' : `(${tone.frequency/2} waves)`}
           </Label>
           <Slider
             value={[tone.frequency]}
-            onValueChange={(value) => onUpdate({ frequency: value[0] })}
-            min={0.1}
-            max={10}
-            step={0.1}
+            onValueChange={(value) => onUpdate({ frequency: Math.round(value[0]) })}
+            min={1}
+            max={8}
+            step={1}
             className="w-full"
           />
         </div>
@@ -73,7 +70,7 @@ export const ToneControl: React.FC<ToneControlProps> = ({ tone, index, onUpdate,
             onValueChange={(value) => onUpdate({ amplitude: value[0] })}
             min={0}
             max={2}
-            step={0.01}
+            step={0.1}
             className="w-full"
           />
         </div>
@@ -81,14 +78,14 @@ export const ToneControl: React.FC<ToneControlProps> = ({ tone, index, onUpdate,
         {/* Phase Control */}
         <div>
           <Label className="text-sm text-slate-300 mb-2 block">
-            Phase: {(tone.phase / Math.PI).toFixed(2)}π rad
+            Phase: {(tone.phase / Math.PI).toFixed(1)}π
           </Label>
           <Slider
             value={[tone.phase]}
             onValueChange={(value) => onUpdate({ phase: value[0] })}
             min={0}
             max={2 * Math.PI}
-            step={0.01}
+            step={0.1}
             className="w-full"
           />
         </div>

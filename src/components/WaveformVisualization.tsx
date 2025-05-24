@@ -9,22 +9,23 @@ interface WaveformVisualizationProps {
 
 export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ tones }) => {
   const data = useMemo(() => {
-    const points = 500;
-    const maxTime = 4 * Math.PI; // Show 2 full periods of fundamental frequency
-    const timeStep = maxTime / points;
+    const points = 400;
+    const maxLength = 4 * Math.PI; // Show rope length
+    const step = maxLength / points;
 
     const result = [];
     
     for (let i = 0; i <= points; i++) {
-      const t = i * timeStep;
-      const dataPoint: any = { t };
+      const x = i * step;
+      const dataPoint: any = { x };
       
-      // Calculate individual tones
+      // Calculate individual wave modes
       let combinedValue = 0;
       tones.forEach((tone, index) => {
         if (tone.enabled) {
-          const value = tone.amplitude * Math.sin(tone.frequency * t + tone.phase);
-          dataPoint[`tone${index}`] = value;
+          // For rope waves: sin(n * π * x / L) where n is the mode number
+          const value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / maxLength) + tone.phase);
+          dataPoint[`mode${index}`] = value;
           combinedValue += value;
         }
       });
@@ -39,11 +40,8 @@ export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ to
   const colors = [
     '#ef4444', // red
     '#f97316', // orange
-    '#eab308', // yellow
     '#22c55e', // green
     '#3b82f6', // blue
-    '#8b5cf6', // violet
-    '#ec4899', // pink
   ];
 
   return (
@@ -52,24 +50,29 @@ export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ to
         <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
           <XAxis 
-            dataKey="t" 
+            dataKey="x" 
             stroke="#9ca3af"
             tickFormatter={(value) => (value / Math.PI).toFixed(1) + 'π'}
+            label={{ value: 'Position along rope', position: 'insideBottom', offset: -5, style: { textAnchor: 'middle', fill: '#9ca3af' } }}
           />
-          <YAxis stroke="#9ca3af" domain={[-3, 3]} />
+          <YAxis 
+            stroke="#9ca3af" 
+            domain={[-3, 3]}
+            label={{ value: 'Displacement', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fill: '#9ca3af' } }}
+          />
           <Legend />
           
-          {/* Individual tone lines */}
+          {/* Individual wave mode lines */}
           {tones.map((tone, index) => 
             tone.enabled && (
               <Line
-                key={`tone${index}`}
+                key={`mode${index}`}
                 type="monotone"
-                dataKey={`tone${index}`}
+                dataKey={`mode${index}`}
                 stroke={colors[index % colors.length]}
                 strokeWidth={1}
                 dot={false}
-                name={`Tone ${index + 1} (f=${tone.frequency}Hz)`}
+                name={`Mode ${index + 1} (${tone.frequency})`}
                 strokeOpacity={0.6}
               />
             )
@@ -82,7 +85,7 @@ export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ to
             stroke="#06b6d4"
             strokeWidth={3}
             dot={false}
-            name="Combined Waveform"
+            name="Combined Wave"
           />
         </LineChart>
       </ResponsiveContainer>

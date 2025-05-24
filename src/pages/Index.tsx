@@ -17,10 +17,11 @@ const Index = () => {
   const [tones, setTones] = useState<Tone[]>([
     { id: '1', frequency: 1, amplitude: 1, phase: 0, enabled: true },
     { id: '2', frequency: 2, amplitude: 0.5, phase: 0, enabled: true },
-    { id: '3', frequency: 3, amplitude: 0.3, phase: 0, enabled: true },
   ]);
 
   const addTone = useCallback(() => {
+    if (tones.length >= 4) return; // Limit to 4 tones
+    
     const newTone: Tone = {
       id: Date.now().toString(),
       frequency: 1,
@@ -29,7 +30,7 @@ const Index = () => {
       enabled: true,
     };
     setTones(prev => [...prev, newTone]);
-  }, []);
+  }, [tones.length]);
 
   const removeTone = useCallback((id: string) => {
     setTones(prev => prev.filter(tone => tone.id !== id));
@@ -54,7 +55,7 @@ const Index = () => {
             Slincology Explorer
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Interactive Fourier Transform Visualization - Combine sine waves to create complex waveforms
+            Rope Wave Visualization - See how different wave modes combine (1 = half wave, 2 = full wave, etc.)
           </p>
         </div>
 
@@ -63,7 +64,7 @@ const Index = () => {
           {/* Waveform Visualization */}
           <div className="lg:col-span-2">
             <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <h2 className="text-2xl font-semibold mb-4 text-cyan-400">Waveform Visualization</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-cyan-400">Wave Pattern</h2>
               <WaveformVisualization tones={tones} />
             </Card>
           </div>
@@ -72,14 +73,15 @@ const Index = () => {
           <div className="space-y-6">
             <Card className="bg-slate-800/50 border-slate-700 p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-cyan-400">Tone Components</h2>
+                <h2 className="text-2xl font-semibold text-cyan-400">Wave Modes (Max 4)</h2>
                 <div className="flex gap-2">
                   <Button 
                     onClick={addTone}
                     className="bg-cyan-600 hover:bg-cyan-700"
                     size="sm"
+                    disabled={tones.length >= 4}
                   >
-                    Add Tone
+                    Add Mode
                   </Button>
                   <Button 
                     onClick={clearAll}
@@ -99,13 +101,14 @@ const Index = () => {
 
             {/* Info Panel */}
             <Card className="bg-slate-800/50 border-slate-700 p-6">
-              <h3 className="text-lg font-semibold mb-3 text-cyan-400">How to Use</h3>
+              <h3 className="text-lg font-semibold mb-3 text-cyan-400">Wave Modes</h3>
               <div className="text-sm text-slate-300 space-y-2">
-                <p>• Adjust frequency to change the pitch of each tone</p>
-                <p>• Modify amplitude to control the volume</p>
-                <p>• Change phase to shift the wave horizontally</p>
-                <p>• Toggle tones on/off to see their individual contribution</p>
-                <p>• The combined waveform shows the sum of all active tones</p>
+                <p>• Mode 1: Half wavelength (fundamental)</p>
+                <p>• Mode 2: Full wavelength (first harmonic)</p>
+                <p>• Mode 3: 1.5 wavelengths</p>
+                <p>• Mode 4: 2 wavelengths</p>
+                <p>• Amplitude controls wave height</p>
+                <p>• Phase shifts the wave position</p>
               </div>
             </Card>
           </div>

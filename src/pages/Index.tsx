@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { WaveformVisualization } from '@/components/WaveformVisualization';
 import { TonePanel } from '@/components/TonePanel';
@@ -7,7 +6,6 @@ import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-
 export interface Tone {
   id: string;
   frequency: number;
@@ -15,61 +13,70 @@ export interface Tone {
   phase: number;
   enabled: boolean;
 }
-
 const Index = () => {
-  const [tones, setTones] = useState<Tone[]>([
-    { id: '1', frequency: 1, amplitude: 1, phase: 0, enabled: true },
-    { id: '2', frequency: 2, amplitude: 0.5, phase: 0, enabled: true },
-  ]);
+  const [tones, setTones] = useState<Tone[]>([{
+    id: '1',
+    frequency: 1,
+    amplitude: 1,
+    phase: 0,
+    enabled: true
+  }, {
+    id: '2',
+    frequency: 2,
+    amplitude: 0.5,
+    phase: 0,
+    enabled: true
+  }]);
   const [isAnimated, setIsAnimated] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(1);
-
   const addTone = useCallback(() => {
     if (tones.length >= 4) return; // Limit to 4 tones
-    
+
     const newTone: Tone = {
       id: Date.now().toString(),
       frequency: 1,
       amplitude: 0.5,
       phase: 0,
-      enabled: true,
+      enabled: true
     };
     setTones(prev => [...prev, newTone]);
   }, [tones.length]);
-
   const removeTone = useCallback((id: string) => {
     setTones(prev => prev.filter(tone => tone.id !== id));
   }, []);
-
   const updateTone = useCallback((id: string, updates: Partial<Tone>) => {
-    setTones(prev => prev.map(tone => 
-      tone.id === id ? { ...tone, ...updates } : tone
-    ));
+    setTones(prev => prev.map(tone => tone.id === id ? {
+      ...tone,
+      ...updates
+    } : tone));
   }, []);
-
   const clearAll = useCallback(() => {
     setTones([]);
   }, []);
-
   const setJamesPreset = useCallback(() => {
-    setTones([
-      { id: '1', frequency: 1, amplitude: 1, phase: 0, enabled: true },
-      { id: '2', frequency: 3, amplitude: 0.5, phase: 0, enabled: true },
-    ]);
+    setTones([{
+      id: '1',
+      frequency: 1,
+      amplitude: 1,
+      phase: 0,
+      enabled: true
+    }, {
+      id: '2',
+      frequency: 3,
+      amplitude: 0.5,
+      phase: 0,
+      enabled: true
+    }]);
     setIsAnimated(false); // Set to standing waves
   }, []);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
             Slincology Explorer
           </h1>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Rope Wave Visualization - See how different wave modes combine (1 = half wave, 2 = full wave, etc.)
-          </p>
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto"></p>
         </div>
 
         {/* Main Content */}
@@ -82,22 +89,12 @@ const Index = () => {
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-3">
                     <Label className="text-slate-300">Standing Waves</Label>
-                    <Switch
-                      checked={isAnimated}
-                      onCheckedChange={setIsAnimated}
-                    />
+                    <Switch checked={isAnimated} onCheckedChange={setIsAnimated} />
                     <Label className="text-slate-300">Traveling Waves</Label>
                   </div>
                   <div className="flex items-center gap-3 min-w-32">
                     <Label className="text-slate-300 text-sm">Speed</Label>
-                    <Slider
-                      value={[animationSpeed]}
-                      onValueChange={(value) => setAnimationSpeed(value[0])}
-                      min={0.1}
-                      max={3}
-                      step={0.1}
-                      className="w-20"
-                    />
+                    <Slider value={[animationSpeed]} onValueChange={value => setAnimationSpeed(value[0])} min={0.1} max={3} step={0.1} className="w-20" />
                     <span className="text-slate-300 text-sm w-8">{animationSpeed.toFixed(1)}x</span>
                   </div>
                 </div>
@@ -112,41 +109,22 @@ const Index = () => {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-cyan-400">Wave Modes (Max 4)</h2>
                 <div className="flex gap-2">
-                  <Button 
-                    onClick={setJamesPreset}
-                    className="bg-purple-600 hover:bg-purple-700"
-                    size="sm"
-                  >
+                  <Button onClick={setJamesPreset} className="bg-purple-600 hover:bg-purple-700" size="sm">
                     James
                   </Button>
-                  <Button 
-                    onClick={addTone}
-                    className="bg-cyan-600 hover:bg-cyan-700"
-                    size="sm"
-                    disabled={tones.length >= 4}
-                  >
+                  <Button onClick={addTone} className="bg-cyan-600 hover:bg-cyan-700" size="sm" disabled={tones.length >= 4}>
                     Add Mode
                   </Button>
-                  <Button 
-                    onClick={clearAll}
-                    variant="destructive"
-                    size="sm"
-                  >
+                  <Button onClick={clearAll} variant="destructive" size="sm">
                     Clear All
                   </Button>
                 </div>
               </div>
-              <TonePanel 
-                tones={tones}
-                onUpdateTone={updateTone}
-                onRemoveTone={removeTone}
-              />
+              <TonePanel tones={tones} onUpdateTone={updateTone} onRemoveTone={removeTone} />
             </Card>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;

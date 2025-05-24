@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { WaveformVisualization } from '@/components/WaveformVisualization';
-import { WaveformVisualization3D } from '@/components/WaveformVisualization3D';
 import { TonePanel } from '@/components/TonePanel';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -35,9 +34,7 @@ const Index = () => {
   const [isAnimated, setIsAnimated] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(false);
-  const [masterFrequency, setMasterFrequency] = useState(220);
-  const [is3DMode, setIs3DMode] = useState(false);
-  const [waveType, setWaveType] = useState<'planar' | 'circular'>('planar');
+  const [masterFrequency, setMasterFrequency] = useState(220); // A3 as default
 
   // Add audio synthesis
   useAudioSynthesis(tones, soundEnabled, masterFrequency);
@@ -48,7 +45,7 @@ const Index = () => {
     const newTone: Tone = {
       id: Date.now().toString(),
       frequency: 1,
-      amplitude: 0.5,
+      amplitude: 1, // Changed from 0.5 to 1
       phase: 0,
       enabled: true
     };
@@ -92,7 +89,7 @@ const Index = () => {
             Slincology Explorer
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            {is3DMode ? '3D Wave Visualization - Explore planar and circular wave patterns' : 'Rope Wave Visualization - See how different wave modes combine (1 = half wave, 2 = full wave, etc.)'}
+            Rope Wave Visualization - See how different wave modes combine (1 = half wave, 2 = full wave, etc.)
           </p>
         </div>
 
@@ -104,23 +101,6 @@ const Index = () => {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-cyan-400">Wave Pattern</h2>
                 <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-3">
-                    <Label className="text-slate-300">2D</Label>
-                    <Switch checked={is3DMode} onCheckedChange={setIs3DMode} />
-                    <Label className="text-slate-300">3D</Label>
-                  </div>
-                  
-                  {is3DMode && (
-                    <div className="flex items-center gap-3">
-                      <Label className="text-slate-300">Planar</Label>
-                      <Switch 
-                        checked={waveType === 'circular'} 
-                        onCheckedChange={(checked) => setWaveType(checked ? 'circular' : 'planar')} 
-                      />
-                      <Label className="text-slate-300">Circular</Label>
-                    </div>
-                  )}
-                  
                   <div className="flex items-center gap-3">
                     <Label className="text-slate-300">Standing Waves</Label>
                     <Switch checked={isAnimated} onCheckedChange={setIsAnimated} />
@@ -170,16 +150,7 @@ const Index = () => {
                 </div>
               )}
               
-              {is3DMode ? (
-                <WaveformVisualization3D 
-                  tones={tones} 
-                  isAnimated={isAnimated} 
-                  animationSpeed={animationSpeed}
-                  waveType={waveType}
-                />
-              ) : (
-                <WaveformVisualization tones={tones} isAnimated={isAnimated} animationSpeed={animationSpeed} />
-              )}
+              <WaveformVisualization tones={tones} isAnimated={isAnimated} animationSpeed={animationSpeed} />
             </Card>
           </div>
 

@@ -1,8 +1,7 @@
-
 import { useEffect, useRef } from 'react';
 import { Tone } from '@/pages/Index';
 
-export const useAudioSynthesis = (tones: Tone[], enabled: boolean) => {
+export const useAudioSynthesis = (tones: Tone[], enabled: boolean, masterFrequency: number = 220) => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorsRef = useRef<Map<string, OscillatorNode>>(new Map());
   const gainNodesRef = useRef<Map<string, GainNode>>(new Map());
@@ -62,17 +61,15 @@ export const useAudioSynthesis = (tones: Tone[], enabled: boolean) => {
       }
 
       if (oscillator && gainNode && audioContextRef.current) {
-        // Map wave mode frequency to audible frequency
-        // Mode 1 = 220Hz (A3), Mode 2 = 440Hz (A4), etc.
-        const baseFrequency = 220; // A3
-        const audioFrequency = baseFrequency * tone.frequency;
+        // Use master frequency as base instead of fixed 220Hz
+        const audioFrequency = masterFrequency * tone.frequency;
         
         oscillator.frequency.setValueAtTime(audioFrequency, audioContextRef.current.currentTime);
         gainNode.gain.setValueAtTime(tone.amplitude * 0.1, audioContextRef.current.currentTime);
       }
     });
 
-  }, [tones, enabled]);
+  }, [tones, enabled, masterFrequency]);
 
   // Cleanup on unmount
   useEffect(() => {

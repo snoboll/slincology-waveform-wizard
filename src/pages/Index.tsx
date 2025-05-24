@@ -34,9 +34,10 @@ const Index = () => {
   const [isAnimated, setIsAnimated] = useState(true);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [masterFrequency, setMasterFrequency] = useState(220); // A3 as default
 
   // Add audio synthesis
-  useAudioSynthesis(tones, soundEnabled);
+  useAudioSynthesis(tones, soundEnabled, masterFrequency);
 
   const addTone = useCallback(() => {
     if (tones.length >= 4) return; // Limit to 4 tones
@@ -130,6 +131,25 @@ const Index = () => {
                   </div>
                 </div>
               </div>
+              
+              {/* Master Frequency Control */}
+              {soundEnabled && (
+                <div className="mb-4 p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                  <div className="flex items-center gap-4">
+                    <Label className="text-slate-300 text-sm whitespace-nowrap">Master Freq:</Label>
+                    <Slider
+                      value={[masterFrequency]}
+                      onValueChange={value => setMasterFrequency(value[0])}
+                      min={110}
+                      max={880}
+                      step={10}
+                      className="flex-1 max-w-xs"
+                    />
+                    <span className="text-slate-300 text-sm w-12">{masterFrequency}Hz</span>
+                  </div>
+                </div>
+              )}
+              
               <WaveformVisualization tones={tones} isAnimated={isAnimated} animationSpeed={animationSpeed} />
             </Card>
           </div>

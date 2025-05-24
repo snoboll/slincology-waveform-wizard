@@ -20,6 +20,10 @@ export const ToneControl: React.FC<ToneControlProps> = ({ tone, index, onUpdate,
     'border-l-orange-500', 
     'border-l-green-500',
     'border-l-blue-500',
+    'border-l-purple-500',
+    'border-l-pink-500',
+    'border-l-yellow-500',
+    'border-l-indigo-500',
   ];
 
   return (
@@ -54,7 +58,7 @@ export const ToneControl: React.FC<ToneControlProps> = ({ tone, index, onUpdate,
             value={[tone.frequency]}
             onValueChange={(value) => onUpdate({ frequency: Math.round(value[0]) })}
             min={1}
-            max={8}
+            max={16}
             step={1}
             className="w-full"
           />

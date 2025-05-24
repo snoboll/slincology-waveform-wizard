@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
 import { Tone } from '@/pages/Index';
@@ -11,14 +12,12 @@ export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ to
   const [time, setTime] = useState(0);
 
   useEffect(() => {
-    if (!isAnimated) return;
-    
     const interval = setInterval(() => {
       setTime(prevTime => prevTime + 0.05);
     }, 50);
 
     return () => clearInterval(interval);
-  }, [isAnimated]);
+  }, []);
 
   const data = useMemo(() => {
     const points = 400;
@@ -40,8 +39,9 @@ export const WaveformVisualization: React.FC<WaveformVisualizationProps> = ({ to
             // Traveling waves: sin(n * π * x / L - ωt + φ)
             value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / maxLength) - (tone.frequency * time) + tone.phase);
           } else {
-            // Standing waves: sin(n * π * x / L + φ)
-            value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / maxLength) + tone.phase);
+            // Standing waves: A * sin(n * π * x / L + φ) * cos(ωt)
+            // The amplitude oscillates with time
+            value = tone.amplitude * Math.sin((tone.frequency * Math.PI * x / maxLength) + tone.phase) * Math.cos(tone.frequency * time);
           }
           dataPoint[`mode${index}`] = value;
           combinedValue += value;

@@ -45,7 +45,7 @@ const Index = () => {
     const newTone: Tone = {
       id: Date.now().toString(),
       frequency: 1,
-      amplitude: 0.5,
+      amplitude: 1, // Changed from 0.5 to 1
       phase: 0,
       enabled: true
     };
